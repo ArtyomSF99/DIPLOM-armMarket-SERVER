@@ -13,7 +13,7 @@ class AuthController {
             }
             const {login, password, first_name, last_name, email, phone, region, account_create_date} = req.body
             const userData = await authService.registration(login, password, first_name,last_name, email, phone, region, account_create_date)
-            res.cookie('refreshToken', userData.refreshToken, {maxAge:60* 24*60*60*1000, httpOnly:true, sameSite:'none' })
+            res.cookie('refreshToken', userData.refreshToken, {maxAge:60* 24*60*60*1000, httpOnly:true, sameSite:'None', secure:true})
             return res.json(userData)
 
         } catch(e) {
@@ -25,7 +25,7 @@ class AuthController {
             const {login, password} = req.body
             const userData = await authService.login(login, password)
             //res.setHeader('Set-Cookie', `${user.Data.refreshToken}; HttpOnly; Max-Age=30* 24*60*60*1000`);
-            res.cookie('refreshToken', userData.refreshToken, {maxAge:60* 24*60*60*1000, httpOnly:true, secure:true})
+            res.cookie('refreshToken', userData.refreshToken, {maxAge:60* 24*60*60*1000, httpOnly:true,sameSite:'None', secure:true})
             res.json(userData)
             
         }
@@ -62,7 +62,7 @@ class AuthController {
             const {refreshToken} = req.cookies
             console.log(refreshToken)
             const userData = await authService.refresh(refreshToken)
-            res.cookie('refreshToken', userData.refreshToken, {maxAge:60* 24*60*60*1000, httpOnly:true})
+            res.cookie('refreshToken', userData.refreshToken, {maxAge:60* 24*60*60*1000, httpOnly:true,sameSite:'None', secure:true})
             return res.json(userData)
 
         }
