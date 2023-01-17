@@ -13,7 +13,7 @@ class AuthController {
             }
             const {login, password, first_name, last_name, email, phone, region, account_create_date} = req.body
             const userData = await authService.registration(login, password, first_name,last_name, email, phone, region, account_create_date)
-            res.cookie('refreshToken', userData.refreshToken, {maxAge:60* 24*60*60*1000, httpOnly:true})
+            res.cookie('refreshToken', userData.refreshToken, {maxAge:60* 24*60*60*1000, httpOnly:true, sameSite:'none' })
             return res.json(userData)
 
         } catch(e) {
