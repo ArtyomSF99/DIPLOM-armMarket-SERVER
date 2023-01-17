@@ -1,0 +1,114 @@
+CREATE DATABASE score
+////////////////////////////
+CREATE TABLE users
+(
+    Id SERIAL PRIMARY KEY,
+    status CHARACTER VARYING(20) DEFAULT 'user',
+    login CHARACTER VARYING(100) UNIQUE,
+    password TEXT,
+    first_name CHARACTER VARYING(50),
+    last_name CHARACTER VARYING(50),
+    email CHARACTER VARYING(100),
+    phone CHARACTER VARYING(30),
+    region CHARACTER VARYING(20),
+    account_create_date CHARACTER VARYING(10),
+    avatar_path TEXT,
+    account_rating INT DEFAULT 0,
+    account_rating_count INT DEFAULT 0,
+    is_activated BOOLEAN DEFAULT FALSE,
+    activate_link CHARACTER VARYING(100)
+);
+///////////////////////
+CREATE TABLE token
+(
+    Id SERIAL PRIMARY KEY,
+    user_id INTEGER,
+    refresh_token TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (Id) ON DELETE CASCADE
+);
+
+
+///////////////////////
+CREATE TABLE categories
+(
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    parent TEXT DEFAULT '',
+    main_parent TEXT DEFAULT ''
+)
+
+
+
+///////////////////////////////
+
+CREATE TABLE attributes (
+    id SERIAL PRIMARY KEY,
+    category_id INT,
+    attribute_name TEXT,
+    FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
+)
+
+//////////////////////////////
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    user_id INT,
+    product_category_id INT,
+    product_name TEXT,
+    product_price INT,
+    product_discription TEXT,
+    exhibition_date VARCHAR(10),
+    exhibition_time VARCHAR(10),
+    sales_method TEXT DEFAULT 'Հանդիպում',
+    product_folder TEXT,
+    product_main_photo_path TEXT,
+    verifaed BOOLEAN DEFAULT false,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (product_category_id) REFERENCES categories (id) ON DELETE CASCADE
+)
+//////////////////////////////
+
+CREATE TABLE products_attributes (
+   id SERIAL PRIMARY KEY,
+   attribute_id INT,
+   product_id INT,
+   attribute_value TEXT,
+   FOREIGN KEY (attribute_id) REFERENCES attributes (id) ON DELETE CASCADE,
+   FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
+)
+
+//////////////////////////////
+
+CREATE TABLE photo_path (
+   id SERIAL PRIMARY KEY,
+   product_id INT,
+   photo_path TEXT,
+   FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
+
+)
+
+CREATE TABLE avatar_path (
+   id SERIAL PRIMARY KEY,
+   user_id INT,
+   avatar_path TEXT,
+   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+
+)
+////////////////////////////////////
+
+CREATE TABLE user_opinion (
+   id SERIAL PRIMARY KEY,
+   user_id INT,
+   sender_user_id INT,
+   avatar_path TEXT,
+   user_name TEXT,
+   opinion TEXT,
+   exhibition_date VARCHAR(10),
+   exhibition_time VARCHAR(10),
+   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+   FOREIGN KEY (sender_user_id) REFERENCES users (id) ON DELETE CASCADE
+)
+
+
+
+SELECT  attribute_value, attribute_name FROM products_attributes, attributes
+WHERE attributes.category_id = 31 AND products_attributes.product_id =2
