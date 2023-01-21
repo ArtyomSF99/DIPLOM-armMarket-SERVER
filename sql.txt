@@ -108,6 +108,19 @@ CREATE TABLE user_opinion (
    FOREIGN KEY (sender_user_id) REFERENCES users (id) ON DELETE CASCADE
 )
 
+//////////////////////////////////////
+
+CREATE TABLE chats (
+    id SERIAL PRIMARY KEY,
+    user1_id INT,
+    user2_id INT,
+    message TEXT,
+    message_date VARCHAR(10),
+    message_time VARCHAR(10),
+    FOREIGN KEY (user1_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (user2_id) REFERENCES users (id) ON DELETE CASCADE
+)
+
 
 
 SELECT  attribute_value, attribute_name FROM products_attributes, attributes

@@ -1,4 +1,6 @@
 const express =require('express')
+const socketIo = require('socket.io')
+const http = require('http')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const multer = require('multer');
@@ -11,6 +13,51 @@ const categoryManagementRouter = require('./routes/category_management_routes')
 const productRouter = require('./routes/products_routes')
 const userRouter = require('./routes/user_routes')
 const errorMiddleware = require('./middlewares/error_middleware')
+const chat_service = require('./service/chat_service')
+
+const PORT = process.env.PORT || 8000
+
+const app = express()
+const server = http.createServer(app)
+const io = socketIo(server, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"]
+      }
+    
+})
+
+io.on('connection', (socket) => {
+    // console.log(`User connected: }`); 
+ 
+    //Handle message event
+    socket.on('send_message', (data) => {
+      //Insert the message into the database
+    //   db.query('INSERT INTO messages (sender_id, receiver_id, message, created_at) VALUES ($1, $2, $3, $4)', [data.sender_id, data.receiver_id, data.message, new Date()], (err, res) => {
+    //     if (err) {
+    //       console.log(err.stack);
+    //     } else {
+    //       // Send the message to the recipient
+    //       io.to(data.receiver_id).emit('message', data);
+    //     }
+    //   });
+    socket.emit('get_messages', data);
+    console.log(data)
+   });
+   
+//    chat_service.getMessagesById(1,2)
+//    .then((messages) => socket.emit("get_messages", messages))
+//    .catch((error) => console.log(error))
+    //Handle disconnect event
+    socket.on('disconnect', () => {
+      console.log(`User disconnected: ${socket.id}`);
+    });
+  }
+    );
+  
+  server.listen(5001, () => {
+    console.log('Server listening on port 5001');
+  });
 
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -41,9 +88,7 @@ const fileFilter = (req, file, cb) => {
  }
  
 
-const PORT = process.env.PORT || 8000
 
-const app = express()
 app.use(cors({
     credentials: true,
     origin: process.env.CLIENT_URL
