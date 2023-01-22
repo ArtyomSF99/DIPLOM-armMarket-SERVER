@@ -16,12 +16,13 @@ const errorMiddleware = require('./middlewares/error_middleware')
 const chat_service = require('./service/chat_service')
 
 const PORT = process.env.PORT || 8000
+const SOCKET_PORT = process.env.SOCKET_PORT || 5001
 
 const app = express()
 const server = http.createServer(app)
 const io = socketIo(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: process.env.CLENT_URL || "http://localhost:3000",
         methods: ["GET", "POST"]
       }
     
@@ -66,7 +67,7 @@ io.on('connection', (socket) => {
   }
     );
   
-  server.listen(5001, () => {
+  server.listen(SOCKET_PORT, () => {
     console.log('Server listening on port 5001');
   });
 
