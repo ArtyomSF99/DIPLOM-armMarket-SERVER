@@ -28,8 +28,18 @@ const io = socketIo(server, {
 })
 
 io.on('connection', (socket) => {
-    // console.log(`User connected: }`); 
- 
+    // console.log(`User connected: ${socket.id} }`);
+    socket.on('join', (data) => {
+        socket.join(data.senderId + data.receiverId);
+      
+    });
+    socket.on('get_chat_messages', (data) =>{
+        console.log(data)
+        chat_service.getMessagesById(data.senderId,data.receiverId)
+        .then((messages) => io.to(data.senderId + data.receiverId).emit('get_all_messages', messages))
+        .catch((error) => console.log(error))
+    })
+  
     //Handle message event
     socket.on('send_message', (data) => {
       //Insert the message into the database
@@ -41,15 +51,16 @@ io.on('connection', (socket) => {
     //       io.to(data.receiver_id).emit('message', data);
     //     }
     //   });
-    socket.emit('get_messages', data);
+    //socket.emit('get_messages', data);
     console.log(data)
+    chat_service.saveMessage(data).then((response) =>  io.to(response.sender_id + response.receiver_id).emit('get_messages', response)).catch((e) =>console.log(e))
+   
    });
    
-//    chat_service.getMessagesById(1,2)
-//    .then((messages) => socket.emit("get_messages", messages))
-//    .catch((error) => console.log(error))
+  
     //Handle disconnect event
     socket.on('disconnect', () => {
+      
       console.log(`User disconnected: ${socket.id}`);
     });
   }

@@ -13,6 +13,10 @@ class UserService {
         const user_opinion = await db.query(`SELECT * FROM user_opinion WHERE user_id=$1`, [id])
         return user_opinion.rows
     }
+    async getChatsByUserId(id){
+        const chats = await db.query(`SELECT * FROM user_chats WHERE my_id=$1`, [id])
+        return chats.rows
+    }
    async createOpinionByUserId(user_id, sender_user_id, avatar_path,user_name, opinion, exhibition_date,exhibition_time) {
         const new_opinion = await db.query(`INSERT INTO user_opinion (user_id, sender_user_id, avatar_path,user_name, opinion, exhibition_date,exhibition_time) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,[user_id, sender_user_id, avatar_path,user_name, opinion, exhibition_date,exhibition_time])
         return new_opinion.rows[0]
@@ -24,6 +28,10 @@ class UserService {
     async deleteOpinionById(id){
         const delete_opinion = await db.query(`DELETE FROM user_opinion WHERE id=$1 RETURNING *`, [id])
         return delete_opinion
+    }
+    async createUserChat(my_id, user_id, user_avatar_path, user_name) {
+        const chat = await db.query(`INSERT INTO user_chats (my_id, user_id, user_avatar_path, user_name) VALUES($1,$2,$3,$4) RETURNING *`,[my_id, user_id, user_avatar_path, user_name])
+        return chat.rows[0]
     }
 }
 

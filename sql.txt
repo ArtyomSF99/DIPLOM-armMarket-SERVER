@@ -110,15 +110,29 @@ CREATE TABLE user_opinion (
 
 //////////////////////////////////////
 
+CREATE TABLE user_chats (
+    id SERIAL PRIMARY KEY,
+    my_id INT,
+    user_id INT,
+    user_avatar_path TEXT,
+    user_name TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (my_id) REFERENCES users (id) ON DELETE CASCADE
+)
+
+//////////////////////////////////
+
 CREATE TABLE chats (
     id SERIAL PRIMARY KEY,
-    user1_id INT,
-    user2_id INT,
+    sender_id INT,
+    receiver_id INT,
+    sender_name TEXT,
+    sender_avatar_path TEXT,
     message TEXT,
     message_date VARCHAR(10),
     message_time VARCHAR(10),
-    FOREIGN KEY (user1_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (user2_id) REFERENCES users (id) ON DELETE CASCADE
+    FOREIGN KEY (sender_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users (id) ON DELETE CASCADE
 )
 
 

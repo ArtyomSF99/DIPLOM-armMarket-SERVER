@@ -24,6 +24,29 @@ class UserController {
             next(e)
         }
     }
+    async getChatsByUserId (req, res, next) {
+        try{
+            const id = req.params.id
+            const chats = await userService.getChatsByUserId(id);
+            return res.json(chats.reverse())
+        }
+        catch (e){
+            next(e)
+        }
+    }
+    async createUserChat (req, res, next) {
+        try{
+            const my_id = req.body.my_id
+            const user_id = req.body.user_id
+            const user_avatar_path = req.body.user_avatar_path
+            const user_name = req.body.user_name
+            const chat = await userService.createUserChat(my_id, user_id, user_avatar_path, user_name);
+            return res.json(chat)
+        }
+        catch (e){
+            next(e)
+        }
+    }
     async createOpinionByUserId (req, res, next) {
         try{
             const user_id = req.body.user_id
