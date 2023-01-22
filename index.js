@@ -22,7 +22,7 @@ const app = express()
 const server = http.createServer(app)
 const io = socketIo(server, {
     cors: {
-        origin: process.env.CLENT_URL || "http://localhost:3000",
+        origin: process.env.CLIENT_URL || "http://localhost:3000",
         methods: ["GET", "POST"]
       }
     
@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
     );
   
   server.listen(SOCKET_PORT, () => {
-    console.log('Server listening on port 5001');
+    console.log('Server listening on port' + SOCKET_PORT);
   });
 
 const storageConfig = multer.diskStorage({
