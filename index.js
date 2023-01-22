@@ -20,11 +20,13 @@ const SOCKET_PORT = process.env.SOCKET_PORT || 5001
 
 const app = express()
 const server = http.createServer(app)
+
 const io = socketIo(server, {
     cors: {
         origin: process.env.CLIENT_URL || "http://localhost:3000",
         methods: ["GET", "POST"]
       }
+    
     
 })
 
@@ -67,9 +69,7 @@ io.on('connection', (socket) => {
   }
     );
   
-  server.listen(SOCKET_PORT, () => {
-    console.log('Server listening on port' + SOCKET_PORT);
-  });
+
 
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -119,7 +119,6 @@ app.use('/', userRouter)
 
 app.use(errorMiddleware)
 
-app.listen(PORT, () => {
-    console.log(`Server started on port: ${PORT}`)
-    
-})
+server.listen(PORT, () => {
+    console.log('Server listening on port' + PORT);
+  });
