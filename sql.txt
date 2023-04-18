@@ -135,6 +135,31 @@ CREATE TABLE chats (
     FOREIGN KEY (receiver_id) REFERENCES users (id) ON DELETE CASCADE
 )
 
+////////////////////////////////
+
+CREATE TABLE transactions (
+id SERIAL PRIMARY KEY,
+buyer_id INTEGER,
+seller_id INTEGER,
+product_id INTEGER,
+amount INTEGER,
+code TEXT,
+transaction_date TIMESTAMP DEFAULT NOW(),
+confirmed BOOLEAN DEFAULT FALSE,
+FOREIGN KEY (buyer_id) REFERENCES users (Id) ON DELETE CASCADE,
+FOREIGN KEY (seller_id) REFERENCES users (Id) ON DELETE CASCADE,
+FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
+);
+
+CREATE TABLE confirmation_codes (
+id SERIAL PRIMARY KEY,
+transaction_id INTEGER,
+code TEXT,
+code_date TIMESTAMP DEFAULT NOW(),
+FOREIGN KEY (transaction_id) REFERENCES transactions (id) ON DELETE CASCADE
+);
+
+////////////////////////////////////
 
 
 SELECT  attribute_value, attribute_name FROM products_attributes, attributes

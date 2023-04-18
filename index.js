@@ -12,8 +12,11 @@ const authRouter = require('./routes/auth_routes')
 const categoryManagementRouter = require('./routes/category_management_routes')
 const productRouter = require('./routes/products_routes')
 const userRouter = require('./routes/user_routes')
+const transactionRouter = require('./routes/tranactions_routes')
 const errorMiddleware = require('./middlewares/error_middleware')
 const chat_service = require('./service/chat_service')
+const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+
 
 const PORT = process.env.PORT || 8000
 const SOCKET_PORT = process.env.SOCKET_PORT || 5001
@@ -112,10 +115,44 @@ app.use(express.static(__dirname + "/uploads"));
 app.get('/hello', (req,res) => {
     res.send('Hello, server is worked')
 })
+app.use('/', multer({storage:storageConfig, fileFilter: fileFilter}).any(), productRouter)
 app.use('/', authRouter)
 app.use('/', categoryManagementRouter)
-app.use('/', multer({storage:storageConfig, fileFilter: fileFilter}).any(), productRouter)
 app.use('/', userRouter)
+app.use('/', transactionRouter)
+
+
+app.post('/charge', (req, res) => {
+    const amount = 500;
+  
+    stripe.customers.create({
+      email: req.body.stripeEmail,
+      source: req.body.stripeToken
+    })
+    .then(customer => stripe.charges.create({
+      amount,
+      description: 'Sample Charge',
+      currency: 'usd',
+      customer: customer.id
+    }))
+    .then(charge => res.send('Success!'))
+    .catch(err => {
+      console.log('Error:', err);
+      res.status(500).send({ error: 'Purchase failed' });
+    });
+  });
+  app.post("/create-payment-intent", async (req, res) => {
+    const { items } = req.body;
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: calculateOrderAmount(items),
+      currency: "usd"
+    });
+  
+    res.send({
+      clientSecret: paymentIntent.client_secret
+    });
+  });
 
 app.use(errorMiddleware)
 
