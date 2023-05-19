@@ -12,7 +12,7 @@ class AuthService {
              const candidate = await db.query(`SELECT login FROM users WHERE login = $1`, [login])
             
             if(candidate.rows.length !=0){
-                throw ApiError.BadRequest("Пользователь c таким email уже существует")
+               return "Пользователь c таким email уже существует"
             } 
             const activation_link = uuid.v4();
              const hashPassword = bcryptjs.hashSync(password,7)
